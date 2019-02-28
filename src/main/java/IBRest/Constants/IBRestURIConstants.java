@@ -3,6 +3,9 @@ package IBRest.Constants;
 public class IBRestURIConstants {
 
     public static final String[] WHITE_HOST_LIST = {"52.23.231.180", "77.120.142.23"};
+    public static final String IB_GW_IP = "69.114.24.211";
+//    public static final String IB_GW_IP = "127.0.0.1";
+    public static final int IB_GW_PORT = 7497;
     public static final String HEADER_API_KEY = "x-api-key";
     public static final String HEADER_API_NONCE = "x-api-nonce";
     public static final String HEADER_SIGNATURE = "x-api-sign";

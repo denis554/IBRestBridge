@@ -53,7 +53,7 @@ public class IBRestModel {
             return false;
         }
 
-        String sig = HmacSHA512.generate( request.getRequestURL() + nonce, SECRET);
+        String sig = HmacSHA512.generate( request.getServletPath() + nonce, SECRET);
         System.out.println("calculated signature = " + sig);
         if (sig != null && sig.compareTo(signature) == 0) {
             return true;

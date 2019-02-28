@@ -1,13 +1,18 @@
 package IBRest.Model.TWS;
 
+import IBRest.Constants.IpFromUrl;
 import com.ib.client.*;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+
+import static IBRest.Constants.IBRestURIConstants.IB_GW_IP;
+import static IBRest.Constants.IBRestURIConstants.IB_GW_PORT;
 
 public class EWrapperImpl implements EWrapper {
     private EReaderSignal readerSignal;
@@ -26,7 +31,6 @@ public class EWrapperImpl implements EWrapper {
     private boolean endedOpenOrder;
     private boolean endedExec;
     private boolean endedPosition;
-    private boolean endedReqMarketData;
 
     private boolean isError;
     private JSONObject errorMsg = new JSONObject();
@@ -35,7 +39,9 @@ public class EWrapperImpl implements EWrapper {
         readerSignal = new EJavaSignal();
         clientSocket = new EClientSocket(this, readerSignal);
 
-        clientSocket.eConnect("127.0.0.1", 7497, 2);
+        System.out.println("IB Gateway IP = " + IB_GW_IP + ", port = " + IB_GW_PORT);
+
+        clientSocket.eConnect(IB_GW_IP, IB_GW_PORT, 11);
 
         final EReader reader = new EReader(clientSocket, readerSignal);
         reader.start();
@@ -385,7 +391,6 @@ public class EWrapperImpl implements EWrapper {
      * @param contract
      */
     public void reqMarketData(int reqId, Contract contract) {
-        endedReqMarketData = false;
         errorMsg.clear();
         if (isEmptyMarketData()) {
             getClient().reqMktData(1001, contract, "", false, null);
