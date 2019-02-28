@@ -38,9 +38,6 @@ public class IBRestModel {
     }
 
     private boolean checkSignature() {
-//        System.out.println("getServerName" + request.getServerName());
-//        System.out.println("getServletPath" + request.getServletPath());
-//        System.out.println("getRequestURL" + request.getRequestURL());
 
         System.out.println("nonce: " + nonce);
         System.out.println("apiKey: " + apiKey);
