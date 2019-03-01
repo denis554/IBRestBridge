@@ -41,7 +41,7 @@ public class EWrapperImpl implements EWrapper {
 
         System.out.println("IB Gateway IP = " + IB_GW_IP + ", port = " + IB_GW_PORT);
 
-        clientSocket.eConnect(IB_GW_IP, IB_GW_PORT, 15);
+        clientSocket.eConnect(IB_GW_IP, IB_GW_PORT, 17);
 
         final EReader reader = new EReader(clientSocket, readerSignal);
         reader.start();
