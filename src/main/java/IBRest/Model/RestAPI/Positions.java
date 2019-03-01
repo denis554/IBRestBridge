@@ -7,12 +7,12 @@ import javax.servlet.http.HttpServletRequest;
 
 import static IBRest.Application.IBCon;
 
-public class Balance extends IBRestModel {
+public class Positions extends IBRestModel {
 
-    public Balance(int reqId, String mode, String param, HttpServletRequest request) {
+    public Positions(HttpServletRequest request) {
         super(request);
         if (isAuthHost) {
-            IBCon.reqBalance(reqId, mode, param);
+            IBCon.reqPositions();
         }
     }
 
@@ -20,7 +20,7 @@ public class Balance extends IBRestModel {
         if (!isAuthHost) {
             return retForbiddenHost();
         }
-        IBCon.waitForBalance();
-        return IBCon.getBalance();
+        IBCon.waitForPosition();
+        return IBCon.getPositions();
     }
 }

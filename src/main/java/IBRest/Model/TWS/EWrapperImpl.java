@@ -1,11 +1,9 @@
 package IBRest.Model.TWS;
 
-import IBRest.Constants.IpFromUrl;
 import com.ib.client.*;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -26,11 +24,13 @@ public class EWrapperImpl implements EWrapper {
     protected Map<Integer, Double> mapPrice = new HashMap<>();
     protected Map<Integer, Integer> mapSize = new HashMap<>();
 
-    protected JSONArray balance = new JSONArray();
+    protected JSONArray positions = new JSONArray();
+    protected JSONObject balance = new JSONObject();
 
     private boolean endedOpenOrder;
     private boolean endedExec;
     private boolean endedPosition;
+    private boolean endedBalance;
 
     private boolean isError;
     private JSONObject errorMsg = new JSONObject();
@@ -41,7 +41,7 @@ public class EWrapperImpl implements EWrapper {
 
         System.out.println("IB Gateway IP = " + IB_GW_IP + ", port = " + IB_GW_PORT);
 
-        clientSocket.eConnect(IB_GW_IP, IB_GW_PORT, 11);
+        clientSocket.eConnect(IB_GW_IP, IB_GW_PORT, 15);
 
         final EReader reader = new EReader(clientSocket, readerSignal);
         reader.start();
@@ -95,16 +95,6 @@ public class EWrapperImpl implements EWrapper {
      */
     public JSONObject getCommissionBy(String execId) {
         return commisionMap.get(execId);
-    }
-
-    /**
-     * get the balance of the account
-     * @return
-     */
-    public JSONObject getBalance() {
-        JSONObject jObj = new JSONObject();
-        jObj.put("balances", balance);
-        return jObj;
     }
 
     /**
@@ -393,7 +383,7 @@ public class EWrapperImpl implements EWrapper {
     public void reqMarketData(int reqId, Contract contract) {
         errorMsg.clear();
         if (isEmptyMarketData()) {
-            getClient().reqMktData(1001, contract, "", false, null);
+            getClient().reqMktData(reqId, contract, "", false, null);
         }
     }
 
@@ -401,14 +391,57 @@ public class EWrapperImpl implements EWrapper {
         return mapPrice.isEmpty() && mapSize.isEmpty();
     }
 
-    public void reqBalance() {
+    public void reqBalance(int reqId, String mode, String param) {
+        isError = false;
+        endedBalance = false;
+        balance.clear();
+        errorMsg.clear();
+        getClient().reqAccountSummary(reqId, mode, param);
+    }
+
+    /**
+     * get the positions of the account
+     * @return
+     */
+    public JSONObject getPositions() {
+        JSONObject jObj = new JSONObject();
+        if (!isError()) {
+            jObj.put("positions", positions);
+        } else {
+            jObj = getErrorMsg();
+        }
+        return jObj;
+    }
+
+    /**
+     * get Balance for the account
+     * @return
+     */
+    public JSONObject getBalance() {
+        JSONObject jObj = new JSONObject();
+        if (!isError()) {
+            jObj.put("balance", balance);
+        } else {
+            jObj = getErrorMsg();
+        }
+        return jObj;
+    }
+
+    /**
+     * request the positions
+     */
+    public void reqPositions() {
         isError = false;
         endedPosition = false;
-        balance.clear();
+        positions.clear();
         errorMsg.clear();
         getClient().reqPositions();
     }
 
+    /**
+     * request the cancel order by an id
+     * @param orderId
+     */
     public void reqCancelOrder(int orderId) {
         isError = false;
         errorMsg.clear();
@@ -438,6 +471,24 @@ public class EWrapperImpl implements EWrapper {
                 iCnt++;
             } catch (InterruptedException e) {
                 e.printStackTrace();
+            }
+            if (iCnt >= 1000) {//time out 10 seconds
+                break;
+            }
+        }
+    }
+
+    public void waitForBalance() {
+        int iCnt = 0;
+        while(!endedBalance) {
+            try {
+                Thread.sleep(10);
+                iCnt++;
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            if (endedBalance || isError) {
+                break;
             }
             if (iCnt >= 1000) {//time out 10 seconds
                 break;
@@ -797,7 +848,7 @@ public class EWrapperImpl implements EWrapper {
         jObj.put("Currency", contract.currency());
         jObj.put("Position", pos);
         jObj.put("Avg cost", avgCost);
-        balance.add(jObj);
+        positions.add(jObj);
 
         System.out.println(ret);
     }
@@ -809,13 +860,20 @@ public class EWrapperImpl implements EWrapper {
     }
 
     @Override
-    public void accountSummary(int i, String s, String s1, String s2, String s3) {
-
+    public void accountSummary(int reqId, String account, String tag,
+                               String value, String currency) {
+        System.out.println("Acct Summary. ReqId: " + reqId + ", Acct: " + account + ", Tag: " + tag + ", Value: " + value + ", Currency: " + currency);
+        balance.put("ReqId", reqId);
+        balance.put("Account", account);
+        balance.put("Tag", tag);
+        balance.put("Value", value);
+        balance.put("Currency", currency);
     }
 
     @Override
-    public void accountSummaryEnd(int i) {
-
+    public void accountSummaryEnd(int reqId) {
+        endedBalance = true;
+        System.out.println("AccountSummaryEnd. Req Id: "+reqId+"\n");
     }
 
     @Override

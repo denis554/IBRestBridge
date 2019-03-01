@@ -70,28 +70,44 @@ public class RestAPIController {
         return new CancelAllOrders(request);
     }
 
-    @RequestMapping(value = IBRestURIConstants.BALANCE, method = RequestMethod.GET)
-    public Balance Balance(HttpServletRequest request) {
+    @RequestMapping(value = IBRestURIConstants.POSITIONS, method = RequestMethod.GET)
+    public Positions Positions(HttpServletRequest request) {
         String ipAddress = request.getHeader("X-FORWARDED-FOR");
-        System.out.println("Called [Balance] API From " + ipAddress +
+        System.out.println("Called [Positions] API From " + ipAddress +
                 ", path = " + request.getRequestURI());
-        return new Balance(request);
+        return new Positions(request);
+    }
+
+    @RequestMapping(value = IBRestURIConstants.BALANCE, method = RequestMethod.GET)
+    public Balance Balance(@PathVariable("id") int reqId,
+                           @PathVariable("m") String mode,
+                           @PathVariable("p") String param,
+                           HttpServletRequest request) {
+        String ipAddress = request.getHeader("X-FORWARDED-FOR");
+        System.out.println("Called [Positions] API From " + ipAddress +
+                ", [ReqId] = " + reqId +
+                ", [Mode] = " + mode +
+                ", [Params] = " + param +
+                ", path = " + request.getRequestURI());
+        return new Balance(reqId, mode, param, request);
     }
 
     @RequestMapping(value = IBRestURIConstants.REQ_MARKET_DATA, method = RequestMethod.GET)
-    public ReqMarketData ReqMarketData(@PathVariable("st") String stock,
+    public ReqMarketData ReqMarketData(@PathVariable("id") int reqId,
+                                       @PathVariable("st") String stock,
                                        @PathVariable("s") String symbol,
                                        @PathVariable("c") String currencyUnit,
                                        @PathVariable("e") String exchange,
                                        HttpServletRequest request) {
         String ipAddress = request.getHeader("X-FORWARDED-FOR");
         System.out.println("Called [ReqMarketData] API From " + ipAddress +
+                ", [ReqId] = " + reqId +
                 ", [Stock] = " + stock +
                 ", [Symbol] = " + symbol +
                 ", [Currency] = " + currencyUnit +
                 ", [Exchange] = " + exchange +
                 ", [Path] = " + request.getRequestURI());
-        return new ReqMarketData(stock, symbol, currencyUnit, exchange, request);
+        return new ReqMarketData(reqId, stock, symbol, currencyUnit, exchange, request);
     }
 
     @RequestMapping(value = IBRestURIConstants.CANCEL_ORDER, method = RequestMethod.GET)

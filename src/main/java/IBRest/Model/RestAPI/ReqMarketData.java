@@ -12,7 +12,7 @@ public class ReqMarketData extends IBRestModel {
 
     private int reqId;
 
-    public ReqMarketData(String stock, String symbol, String currencyUnit, String exchange, HttpServletRequest request) {
+    public ReqMarketData(int reqId, String stock, String symbol, String currencyUnit, String exchange, HttpServletRequest request) {
         super(request);
 
         Contract contract = new Contract();
@@ -34,7 +34,7 @@ public class ReqMarketData extends IBRestModel {
 
         if (isAuthHost) {
 
-            reqId = 1001;
+            this.reqId = reqId;
 
             IBCon.reqMarketData(reqId, contract);
 
