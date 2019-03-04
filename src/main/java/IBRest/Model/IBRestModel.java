@@ -44,13 +44,13 @@ public class IBRestModel {
         System.out.println("signature = " + signature);
         System.out.println("path: " + request.getRequestURL());
         System.out.println("API_KEY: " + API_KEY);
-        System.out.println("SECRET: " + SECRET);
+        System.out.println("API_SECRET: " + API_SECRET);
 
         if (!checkApiKey()) {
             return false;
         }
 
-        String sig = HmacSHA512.generate( request.getServletPath() + nonce, SECRET);
+        String sig = HmacSHA512.generate( request.getServletPath() + nonce, API_SECRET);
         System.out.println("calculated signature = " + sig);
         if (sig != null && sig.compareTo(signature) == 0) {
             return true;

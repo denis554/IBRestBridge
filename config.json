@@ -1,0 +1,10 @@
+{
+   "api-key":"30DE3B4A5C3A30BCA64DB9B63BA04ECC",
+   "api-secret":"7B242B4B6D626F0D73228100F4FB1639",
+   "ib-gw-ip":"69.114.24.211",
+   "ib-gw-port":7497,
+   "white-list": [
+     "52.23.231.180",
+     "77.120.142.23"
+   ]
+}
