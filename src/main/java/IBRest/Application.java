@@ -27,6 +27,7 @@ public class Application {
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
         setArgs(Arrays.asList(args));
+        setConfig();
         IBCon = new EWrapperImpl();
     }
 
@@ -47,7 +48,6 @@ public class Application {
                     System.out.println("IB GW PORT = " + IBRestURIConstants.IB_GW_PORT);
                 }
             }
-            setConfig();
         } catch (Exception e) {
             e.printStackTrace();
         }
