@@ -7,10 +7,23 @@ IB REST API based on Java Spring.
 
 All inputs and outputs use JSON format.
 
-```javascript
+```
 /MARKET
   GET /Order/Market/Action/{a}/Quantity/{q}/Stock/{st}/Symbol/{s}/CurrencyUnit/{c}/Exchange/{e}
+```
 
+```javascript
+{
+  "_links" : {
+    …
+    "profile" : {
+      "href" : "http://localhost:8080/alps"
+    }
+  }
+}
+```
+
+```
 /LIMIT ORDER
   GET /Order/LimitOrder/Action/{a}/Price/{p}/Quantity/{q}/Stock/{st}/Symbol/{s}/CurrencyUnit/{c}/Exchange/{e}
 
