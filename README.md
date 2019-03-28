@@ -7,7 +7,7 @@ IB REST API based on Java Spring.
 
 All inputs and outputs use JSON format.
 
-```
+```javascript
 /MARKET
   GET /Order/Market/Action/{a}/Quantity/{q}/Stock/{st}/Symbol/{s}/CurrencyUnit/{c}/Exchange/{e}
 
